@@ -2,9 +2,9 @@
 
 Get NutriScan running in 5 minutes! This guide gets you from zero to analyzing receipts quickly.
 
-## ⚡ Super Quick Setup (For Testing)
+## ⚡ Setup Instructions
 
-The app works immediately with mock data - no API keys required for testing!
+Follow these steps to get NutriScan running:
 
 ### 1. Install Dependencies
 ```bash
@@ -24,12 +24,12 @@ cd backend && npm run dev
 cd frontend && npm start
 ```
 
-### 3. Test the App
-- Open: `http://localhost:3000`
-- Upload any image file
-- Get instant mock nutrition analysis!
+### 3. Configure Google Cloud
+- Follow the Google Cloud setup below
+- Upload receipt images for real OCR processing
+- Get nutrition analysis of your purchases!
 
-**✅ That's it! The app is working with realistic mock data.**
+**✅ Google Cloud Vision API is required for OCR functionality.**
 
 ---
 
@@ -139,14 +139,9 @@ node test-vision-setup.js
 
 ---
 
-## 🎯 Development Mode
+## 🎯 Production Mode
 
-### With Mock Data (No APIs)
-- Perfect for UI development
-- Returns realistic grocery receipt data
-- All features work except real image processing
-
-### With Real APIs
+### With Google Cloud Vision API
 - Process actual receipt photos
 - Real nutrition data lookups
 - Full production experience

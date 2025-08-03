@@ -1,12 +1,14 @@
 import React, { useRef, useState } from 'react';
 import { Camera, Upload, Image } from 'lucide-react';
+import { UserPreferences } from '../types';
 
 interface ReceiptUploadProps {
   onUpload: (file: File) => void;
-  isAnalyzing: boolean;
+  isAnalyzing?: boolean;
+  userPreferences?: UserPreferences;
 }
 
-export const ReceiptUpload: React.FC<ReceiptUploadProps> = ({ onUpload, isAnalyzing }) => {
+export const ReceiptUpload: React.FC<ReceiptUploadProps> = ({ onUpload, isAnalyzing = false, userPreferences }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const cameraInputRef = useRef<HTMLInputElement>(null);
   const [dragActive, setDragActive] = useState(false);

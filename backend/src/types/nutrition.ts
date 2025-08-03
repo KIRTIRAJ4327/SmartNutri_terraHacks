@@ -24,7 +24,12 @@ export interface NutritionAnalysis {
   totalSugarIntake: number; // estimated grams
   addedSugarPercent: number; // percentage of items with added sugars
   nutrientGaps: string[]; // identified deficiencies
-  recommendations: string[];
+  recommendations: Array<{
+    type: 'swap' | 'reduce' | 'add';
+    priority: 'high' | 'medium' | 'low';
+    message: string;
+    reason: string;
+  }>;
   analysisCount: number;
   processingTime: number;
   cacheHitRate: number; // performance metric
@@ -84,7 +89,7 @@ export interface NutritionCache {
   [productName: string]: {
     analysis: ProductAnalysis;
     timestamp: number;
-    source: 'api' | 'estimation';
+    source: 'cnf' | 'api' | 'estimation';
   };
 }
 

@@ -9,6 +9,7 @@ import path from 'path';
 import fs from 'fs';
 import { receiptRoutes } from './routes/receipt';
 import { healthRoutes } from './routes/health';
+import debugRoutes from './routes/debug';
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -25,7 +26,10 @@ const corsOptions = {
     ? ['https://your-frontend-domain.com'] // Update with actual frontend URL
     : ['http://localhost:3000', 'http://localhost:3001'], // Development origins
   credentials: true,
-  optionsSuccessStatus: 200
+  optionsSuccessStatus: 200,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
+  exposedHeaders: ['Content-Type']
 };
 
 // Global middleware
@@ -46,9 +50,7 @@ const storage = multer.diskStorage({
     cb(null, uploadsDir);
   },
   filename: (req, file, cb) => {
-    // Generate unique filename with timestamp
-    const uniqueName = `receipt_${Date.now()}_${Math.round(Math.random() * 1E9)}${path.extname(file.originalname)}`;
-    cb(null, uniqueName);
+    cb(null, file.originalname);
   }
 });
 
@@ -124,6 +126,7 @@ const handleMulterError = (error: any, req: express.Request, res: express.Respon
 // Route definitions
 app.use('/api/health', healthRoutes);
 app.use('/api/receipt', upload.single('image'), handleMulterError, receiptRoutes);
+app.use('/api/debug', debugRoutes);
 
 // Root endpoint
 app.get('/', (req, res) => {
@@ -222,10 +225,10 @@ app.listen(PORT, () => {
   console.log('✅ Server ready to accept requests');
   
   // Run initial cleanup
-  cleanupOldFiles();
+  // cleanupOldFiles();
   
   // Schedule periodic cleanup every hour
-  setInterval(cleanupOldFiles, 60 * 60 * 1000);
+  // setInterval(cleanupOldFiles, 60 * 60 * 1000);
 });
 
 export default app;

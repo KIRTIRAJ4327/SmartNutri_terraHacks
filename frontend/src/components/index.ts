@@ -1,3 +1,9 @@
 export { ReceiptUpload } from './ReceiptUpload';
 export { ResultsDisplay } from './ResultsDisplay';
 export { LoadingSpinner } from './LoadingSpinner';
+export { GoalSelection } from './GoalSelection';
+export { ManualEntry } from './ManualEntry';
+export { EnhancedResultsDisplay } from './EnhancedResultsDisplay';
+export { InputChoice } from './InputChoice';
+export { PersonalizedApp } from './PersonalizedApp';
+export { GamificationDisplay } from './GamificationDisplay';
