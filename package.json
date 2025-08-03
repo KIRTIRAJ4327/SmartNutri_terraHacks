@@ -5,12 +5,14 @@
   "main": "backend/dist/server.js",
   "scripts": {
     "start": "cd backend && npm start",
-    "build": "cd backend && npm run build",
     "dev": "cd backend && npm run dev",
     "install-deps": "cd backend && npm install"
   },
   "engines": {
     "node": ">=18.0.0"
+  },
+  "dependencies": {
+    "typescript": "^5.0.0"
   },
   "repository": {
     "type": "git",
