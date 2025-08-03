@@ -1,0 +1,10 @@
+# Ignore frontend files - only deploy backend
+frontend/
+node_modules/
+*.log
+.env
+.env.local
+.env.production
+.env.development
+vercel.json
+.vercelignore 

@@ -24,7 +24,8 @@ export function InputChoice({ userPreferences, onAnalysisComplete, onError }: In
         formData.append('preferences', JSON.stringify(userPreferences));
       }
 
-      const response = await fetch('http://localhost:5000/api/receipt/analyze', {
+      const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:5000';
+    const response = await fetch(`${apiUrl}/api/receipt/analyze`, {
         method: 'POST',
         body: formData,
       });

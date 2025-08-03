@@ -1,89 +1,120 @@
-import React, { useState, useEffect } from 'react';
-import { GoalSelection } from './GoalSelection';
-import { InputChoice } from './InputChoice';
-import { EnhancedResultsDisplay } from './EnhancedResultsDisplay';
-import { LoadingSpinner } from './LoadingSpinner';
-import { UserPreferences, EnhancedAPIResponse } from '../types';
+import React, { useState, useEffect } from "react";
+import { GoalSelection } from "./GoalSelection";
+import { InputChoice } from "./InputChoice";
+import { EnhancedResultsDisplay } from "./EnhancedResultsDisplay";
+import { LoadingSpinner } from "./LoadingSpinner";
+import { UserPreferences, EnhancedAPIResponse } from "../types";
 
-type AppState = 'onboarding' | 'input' | 'analyzing' | 'results' | 'error';
+type AppState = "onboarding" | "input" | "analyzing" | "results" | "error";
 
 export function PersonalizedApp() {
-  const [appState, setAppState] = useState<AppState>('onboarding');
-  const [userPreferences, setUserPreferences] = useState<UserPreferences | null>(null);
+  const [appState, setAppState] = useState<AppState>("onboarding");
+  const [userPreferences, setUserPreferences] =
+    useState<UserPreferences | null>(null);
   const [results, setResults] = useState<EnhancedAPIResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   // Load saved preferences on startup
   useEffect(() => {
-    const savedPreferences = localStorage.getItem('nutriscan-preferences');
+    const savedPreferences = localStorage.getItem("nutriscan-preferences");
     if (savedPreferences) {
       try {
         const preferences = JSON.parse(savedPreferences);
-        setUserPreferences(preferences);
-        setAppState('input');
+        // Validate that preferences have a valid goal
+        const validGoals = [
+          "weight_management",
+          "heart_health",
+          "diabetes_care",
+          "fitness",
+          "general_wellness",
+        ];
+        if (
+          preferences &&
+          preferences.goal &&
+          validGoals.includes(preferences.goal)
+        ) {
+          setUserPreferences(preferences);
+          setAppState("input");
+        } else {
+          console.warn("Invalid preferences found, starting fresh");
+          localStorage.removeItem("nutriscan-preferences");
+        }
       } catch (error) {
-        console.warn('Failed to load saved preferences:', error);
+        console.warn("Failed to load saved preferences:", error);
+        localStorage.removeItem("nutriscan-preferences");
       }
     }
   }, []);
 
   const handleGoalSelection = async (preferences: UserPreferences) => {
     setUserPreferences(preferences);
-    
+
     // Save preferences to localStorage
-    localStorage.setItem('nutriscan-preferences', JSON.stringify(preferences));
-    
+    localStorage.setItem("nutriscan-preferences", JSON.stringify(preferences));
+
     // Also save to backend
     try {
-      await fetch('http://localhost:5000/api/receipt/preferences', {
-        method: 'POST',
+      await fetch("/api/receipt/preferences", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify(preferences),
       });
     } catch (error) {
-      console.warn('Failed to save preferences to backend:', error);
+      console.warn("Failed to save preferences to backend:", error);
       // Continue anyway - localStorage works
     }
-    
-    setAppState('input');
+
+    setAppState("input");
   };
 
   const handleAnalysisComplete = (analysisResults: EnhancedAPIResponse) => {
     setResults(analysisResults);
-    setAppState('results');
+    setAppState("results");
   };
 
   const handleAnalysisError = (errorMessage: string) => {
     setError(errorMessage);
-    setAppState('error');
+    setAppState("error");
   };
 
   const handleNewAnalysis = () => {
     setResults(null);
     setError(null);
-    setAppState('input');
+    setAppState("input");
   };
 
   const handleChangeGoal = () => {
     setUserPreferences(null);
     setResults(null);
     setError(null);
-    localStorage.removeItem('nutriscan-preferences');
-    setAppState('onboarding');
+    localStorage.removeItem("nutriscan-preferences");
+    setAppState("onboarding");
   };
 
-  const getGoalDisplayName = (goal: string) => {
-    return goal.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase());
+  const getGoalDisplayName = (goal: string | undefined) => {
+    if (!goal) return "General Wellness";
+    // Validate that goal is one of the expected values
+    const validGoals = [
+      "weight_management",
+      "heart_health",
+      "diabetes_care",
+      "fitness",
+      "general_wellness",
+    ];
+    if (!validGoals.includes(goal)) {
+      return "General Wellness";
+    }
+    return goal.replace("_", " ").replace(/\b\w/g, (l) => l.toUpperCase());
   };
 
   // Render based on current state
-  if (appState === 'onboarding') {
+  if (appState === "onboarding") {
     return <GoalSelection onSelect={handleGoalSelection} />;
   }
 
-  if (appState === 'analyzing') {
+  if (appState === "analyzing") {
     return (
       <div className="min-h-screen bg-gradient-to-br from-green-50 to-blue-50 flex items-center justify-center p-4">
         <div className="text-center">
@@ -92,10 +123,13 @@ export function PersonalizedApp() {
             Analyzing Your Nutrition
           </h2>
           <p className="text-gray-600 mb-4">
-            {userPreferences 
-              ? `Hey ${userPreferences.userName || 'there'}! Personalizing recommendations for ${getGoalDisplayName(userPreferences.goal)}`
-              : 'Processing your food data with AI nutrition analysis'
-            }
+            {userPreferences
+              ? `Hey ${
+                  userPreferences.userName || "there"
+                }! Personalizing recommendations for ${getGoalDisplayName(
+                  userPreferences?.goal
+                )}`
+              : "Processing your food data with AI nutrition analysis"}
           </p>
           <div className="bg-white rounded-lg p-4 shadow-lg max-w-md mx-auto">
             <div className="flex items-center justify-center text-sm text-gray-500">
@@ -108,7 +142,7 @@ export function PersonalizedApp() {
     );
   }
 
-  if (appState === 'results' && results) {
+  if (appState === "results" && results) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-green-50 to-blue-50 p-4">
         <div className="mb-6 max-w-4xl mx-auto">
@@ -122,21 +156,24 @@ export function PersonalizedApp() {
               </button>
               {userPreferences && (
                 <div className="text-sm text-gray-600">
-                  <span className="font-medium">{userPreferences.userName || 'User'}'s Goal:</span> {getGoalDisplayName(userPreferences.goal)}
+                  <span className="font-medium">
+                    {userPreferences.userName || "User"}'s Goal:
+                  </span>{" "}
+                  {getGoalDisplayName(userPreferences?.goal)}
                 </div>
               )}
             </div>
           </div>
         </div>
-        <EnhancedResultsDisplay 
-          results={results} 
+        <EnhancedResultsDisplay
+          results={results}
           onNewAnalysis={handleNewAnalysis}
         />
       </div>
     );
   }
 
-  if (appState === 'error') {
+  if (appState === "error") {
     return (
       <div className="min-h-screen bg-gradient-to-br from-green-50 to-blue-50 flex items-center justify-center p-4">
         <div className="max-w-md mx-auto text-center">
@@ -146,7 +183,7 @@ export function PersonalizedApp() {
               Analysis Failed
             </h2>
             <p className="text-gray-600 mb-6">
-              {error || 'Something went wrong during the analysis.'}
+              {error || "Something went wrong during the analysis."}
             </p>
             <div className="space-y-3">
               <button
@@ -178,18 +215,18 @@ export function PersonalizedApp() {
             🍃 NutriScan
           </h1>
           <p className="text-xl text-gray-600">
-            {userPreferences?.userName 
+            {userPreferences?.userName
               ? `Welcome back, ${userPreferences.userName}! 👋`
-              : 'Smart Nutrition Analysis for Healthier Living'
-            }
+              : "Smart Nutrition Analysis for Healthier Living"}
           </p>
-          
+
           {userPreferences && (
             <div className="mt-4 flex items-center justify-center">
               <div className="flex items-center px-4 py-2 bg-white rounded-full shadow-md">
                 <span className="mr-2">🎯</span>
                 <span className="text-gray-700">
-                  <strong>Your Goal:</strong> {getGoalDisplayName(userPreferences.goal)}
+                  <strong>Your Goal:</strong>{" "}
+                  {getGoalDisplayName(userPreferences?.goal)}
                 </span>
                 <button
                   onClick={handleChangeGoal}
@@ -212,11 +249,10 @@ export function PersonalizedApp() {
         {/* Footer */}
         <div className="text-center mt-12 text-gray-500 text-sm">
           <p>
-            Powered by Canadian Nutrient File, USDA FoodData Central, and Open Food Facts
+            Powered by Canadian Nutrient File, USDA FoodData Central, and Open
+            Food Facts
           </p>
-          <p className="mt-2">
-            🇨🇦 Made for Canadians, by Canadians
-          </p>
+          <p className="mt-2">🇨🇦 Made for Canadians, by Canadians</p>
         </div>
       </div>
     </div>

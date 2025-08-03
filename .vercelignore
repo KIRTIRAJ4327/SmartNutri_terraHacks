@@ -1,0 +1,8 @@
+# Ignore backend files - only deploy frontend
+backend/
+node_modules/
+*.log
+.env
+.env.local
+.env.production
+.env.development 
