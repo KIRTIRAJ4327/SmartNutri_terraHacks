@@ -1,5 +1,5 @@
 import React from 'react';
-import { EnhancedAPIResponse, Recommendation, HistoryStats } from '../types';
+import { EnhancedAPIResponse, Recommendation } from '../types';
 import { GamificationDisplay } from './GamificationDisplay';
 
 interface EnhancedResultsDisplayProps {

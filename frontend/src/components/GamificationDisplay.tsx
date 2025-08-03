@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { GamificationData, Badge } from '../types';
+import { GamificationData } from '../types';
 
 interface GamificationDisplayProps {
   gamification: GamificationData;
@@ -34,16 +34,7 @@ export function GamificationDisplay({ gamification, userName }: GamificationDisp
     }
   };
 
-  const getRarityBorder = (rarity: string): string => {
-    switch (rarity) {
-      case 'bronze': return 'border-amber-500';
-      case 'silver': return 'border-gray-400';
-      case 'gold': return 'border-yellow-400';
-      case 'platinum': return 'border-purple-400';
-      case 'diamond': return 'border-blue-400';
-      default: return 'border-gray-400';
-    }
-  };
+
 
   const getProgressColor = (progress: number): string => {
     if (progress >= 80) return 'bg-green-500';

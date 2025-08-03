@@ -155,7 +155,9 @@ export const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ results, onReset
           {results.recommendations.map((rec, index) => (
             <div key={index} className="flex items-start space-x-3 p-3 bg-blue-50 rounded-lg">
               <div className="text-blue-600 mt-0.5">•</div>
-              <div className="text-gray-700">{rec}</div>
+              <div className="text-gray-700">
+                {typeof rec === 'string' ? rec : rec.message}
+              </div>
             </div>
           ))}
         </div>

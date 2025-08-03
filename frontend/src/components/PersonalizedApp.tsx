@@ -12,7 +12,6 @@ export function PersonalizedApp() {
   const [userPreferences, setUserPreferences] = useState<UserPreferences | null>(null);
   const [results, setResults] = useState<EnhancedAPIResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [isAnalyzing, setIsAnalyzing] = useState(false);
 
   // Load saved preferences on startup
   useEffect(() => {
@@ -51,21 +50,13 @@ export function PersonalizedApp() {
     setAppState('input');
   };
 
-  const handleAnalysisStart = () => {
-    setIsAnalyzing(true);
-    setAppState('analyzing');
-    setError(null);
-  };
-
   const handleAnalysisComplete = (analysisResults: EnhancedAPIResponse) => {
     setResults(analysisResults);
-    setIsAnalyzing(false);
     setAppState('results');
   };
 
   const handleAnalysisError = (errorMessage: string) => {
     setError(errorMessage);
-    setIsAnalyzing(false);
     setAppState('error');
   };
 

@@ -51,7 +51,6 @@ const goalOptions: GoalOption[] = [
 export function GoalSelection({ onSelect }: GoalSelectionProps) {
   const [step, setStep] = useState<'name' | 'goal'>('name');
   const [userName, setUserName] = useState('');
-  const [selectedGoal, setSelectedGoal] = useState<GoalOption | null>(null);
 
   const handleNameSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -61,7 +60,6 @@ export function GoalSelection({ onSelect }: GoalSelectionProps) {
   };
 
   const handleGoalSelect = (goalOption: GoalOption) => {
-    setSelectedGoal(goalOption);
     const preferences: UserPreferences = {
       goal: goalOption.id,
       focusAreas: goalOption.focusAreas,
@@ -75,7 +73,6 @@ export function GoalSelection({ onSelect }: GoalSelectionProps) {
 
   const handleBackToName = () => {
     setStep('name');
-    setSelectedGoal(null);
   };
 
   // NAME COLLECTION STEP
